@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Experimento E — resposta HTTP</title>
+<style>
+body{font:17px system-ui;max-width:850px;margin:28px auto;padding:0 16px;line-height:1.5}
+button{font:inherit;padding:9px 14px;margin:6px 6px 6px 0} textarea{width:100%;min-height:230px;box-sizing:border-box;font:13px monospace}
+output{display:block;white-space:pre-wrap;padding:12px;background:#eee} small{display:block}
+</style>
+<h1>Experimento E: resposta HTTP na LAN</h1>
+<p>Abra esta página no <strong>segundo computador</strong>. Ela consulta <code>/health</code> do servidor: cinco aquecimentos e 30 amostras por condição. Não precisa fazer login.</p>
+<ol>
+<li>Abra o DevTools do Chrome (F12), guia <strong>Network / Rede</strong>. Mantenha-o aberto.</li>
+<li>Selecione <strong>No throttling / Sem limitação</strong> e clique em <strong>Coletar normal</strong>.</li>
+<li>Crie um perfil personalizado com <strong>latência de 100 ms</strong>. Deixe Download e Upload vazios (sem limite configurado) e não configure perda. Selecione esse perfil e clique em <strong>Coletar com atraso</strong>.</li>
+<li>Guarde uma imagem da configuração selecionada. Ao terminar, volte para <strong>No throttling</strong>.</li>
+</ol>
+<p><small>A configuração do perfil é feita manualmente no Chrome. Esta página não consegue verificar qual perfil foi selecionado. A medição é tempo de resposta HTTP completo no navegador; não representa perda IP ou RTT de ACK TCP.</small></p>
+<button id="normal" type="button">1. Coletar normal</button>
+<button id="atraso" type="button">2. Coletar com atraso</button>
+<output id="status">Aguardando coleta.</output>
+<p id="summary"></p>
+<button id="download" type="button" disabled>Baixar CSV das duas condições</button>
+<p>Resultados em JSON: amostras e parâmetros das duas condições.</p>
+<textarea id="result" readonly aria-label="Resultados em JSON"></textarea>
+<script>
+'use strict';
+const byId = id => document.getElementById(id);
+const rows = [], conditions = {};
+const metadata = {version:1, started_utc:new Date().toISOString(), origin:location.origin,
+ endpoint:'/health', user_agent:navigator.userAgent, clock:'performance.now', warmup:5,
+ samples_per_condition:30, pause_between_requests_ms:50, profile_selection:'manual in Chrome DevTools',
+ note:'Expected latency is configuration reported by the operator, not verified by this page.'};
+const wait = ms => new Promise(resolve => setTimeout(resolve,ms));
+let running = false;
+async function measure(condition, index, warmup) {
+  const request_id = `${condition}-${index}-${Date.now()}`;
+  const started_utc = new Date().toISOString(), start = performance.now();
+  const response = await fetch(`/health?experiment_e=${request_id}`,
+    {cache:'no-store',signal:AbortSignal.timeout(15000)});
+  const body = await response.arrayBuffer();
+  const latency_ms = performance.now() - start;
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const health = JSON.parse(new TextDecoder().decode(body));
+  if (health.status !== 'online' || health.protocol !== 'chat/1') throw new Error('Resposta inesperada do servidor.');
+  const row = {condition, phase:warmup?'warmup':'measured', sample:index, request_id,
+    started_utc, latency_ms, response_bytes:body.byteLength, server_timestamp:health.timestamp, status:response.status};
+  rows.push(row);
+  return row;
+}
+function showResults() {
+  byId('summary').textContent = Object.values(conditions).map(c => {
+    const a = c.latency_ms, mean = a.reduce((s,v)=>s+v,0)/a.length;
+    return `${c.condition}: ${a.length} amostras; média ${mean.toFixed(3)} ms.`;
+  }).join(' ');
+  if (conditions.normal && conditions.atraso) {
+    byId('result').value = JSON.stringify({...metadata,finished_utc:new Date().toISOString(),
+      status:'COMPLETE',conditions:Object.values(conditions)},null,2);
+    byId('download').disabled = false;
+  }
+}
+async function collect(condition) {
+  if (running || conditions[condition]) return;
+  if (condition === 'atraso' && !conditions.normal) { byId('status').textContent='Faça primeiro a coleta normal.'; return; }
+  running = true;
+  byId('normal').disabled = byId('atraso').disabled = true;
+  const sampleRows = [];
+  try {
+    for (let i=0;i<35;i++) {
+      byId('status').textContent = i<5 ? `Aquecimento ${i+1}/5 (${condition})…` : `Amostra ${i-4}/30 (${condition})…`;
+      const row = await measure(condition,i<5?i+1:i-4,i<5);
+      if (i>=5) sampleRows.push(row);
+      await wait(50); // Pausa fora da medição; não é a simulação de atraso.
+    }
+    conditions[condition] = {condition,expected_chrome_latency_ms:condition==='normal'?0:100,
+      configured_download_kbps:null,configured_upload_kbps:null,packet_loss_not_configured:true,
+      n:sampleRows.length,latency_ms:sampleRows.map(r=>r.latency_ms),
+      response_bytes:sampleRows.map(r=>r.response_bytes),first_server_timestamp:sampleRows[0].server_timestamp,
+      last_server_timestamp:sampleRows.at(-1).server_timestamp,errors:0};
+    byId('status').textContent=`Coleta ${condition} concluída.`;
+    showResults();
+  } catch (error) {
+    byId('status').textContent=`FALHOU: ${error.message}. Não use a rodada incompleta. Recarregue a página antes de repetir as coletas.`;
+    // Não exportar resultados parciais como uma coleta completa.
+    return;
+  } finally {
+    running = false;
+  }
+  byId('normal').disabled = Boolean(conditions.normal);
+  byId('atraso').disabled = Boolean(conditions.atraso);
+}
+byId('normal').onclick=()=>collect('normal');
+byId('atraso').onclick=()=>collect('atraso');
+byId('download').onclick=()=>{
+  if (!conditions.normal || !conditions.atraso || running) return;
+  const keys=Object.keys(rows[0]);
+  const quote=v=>'"'+String(v).replaceAll('"','""')+'"';
+  const csv=[keys.map(quote).join(','),...rows.map(r=>keys.map(k=>quote(r[k])).join(','))].join('\r\n');
+  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  const a=document.createElement('a'); a.href=url;a.download='experimento-e.csv';a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+</script>
+</html>

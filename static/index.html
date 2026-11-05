@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chat de Redes</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <small>PROJETO 1 · REDES DE COMPUTADORES</small>
+        <h1>Chat de Redes</h1>
+      </div>
+      <span id="status" role="status">Desconectado</span>
+    </header>
+    <section id="login">
+      <h2>Entrar na sala</h2>
+      <p>Use uma das contas de teste descritas no <code>README</code>.</p>
+      <form id="loginForm">
+        <label>Usuário<input id="user" autocomplete="username" required maxlength="32" placeholder="ana"></label>
+        <label>Senha<input id="password" type="password" autocomplete="current-password" required></label>
+        <button>Entrar</button>
+      </form>
+    </section>
+    <section id="chat" hidden>
+      <div class="toolbar">
+        <span id="identity"></span>
+        <button id="logout" class="secondary">Sair</button>
+      </div>
+      <p class="hint">Sala compartilhada · Mensagens com a palavra <strong>URGENTE</strong> geram alerta automático.</p>
+      <div id="messages" role="log" aria-label="Mensagens"></div>
+      <form id="sendForm">
+        <label class="grow">Mensagem<input id="text" required maxlength="2000" autocomplete="off" placeholder="Escreva uma mensagem…"></label>
+        <button id="send" disabled>Enviar</button>
+      </form>
+      <p id="pending" class="hint"></p>
+    </section>
+    <p id="error" role="alert"></p>
+    <footer>Projeto de Redes de Computadores</footer>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

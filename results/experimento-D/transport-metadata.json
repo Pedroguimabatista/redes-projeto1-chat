@@ -1,0 +1,15 @@
+{
+  "utc": "2026-11-04T18:08:56.340918+00:00",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "parameters": {
+    "mode": "client",
+    "host": "127.0.0.1",
+    "port": 9001,
+    "samples": 50,
+    "repeats": 3,
+    "timeout": 1,
+    "rate": 50,
+    "out": "results/final-loopback-transport"
+  },
+  "method": "Eco stop-and-wait; TCP com conexão persistente e frame de comprimento; UDP sem retransmissão da aplicação; timeout por amostra; ausentes podem incluir ida/volta e buffers. Tamanhos incluem 8 bytes do identificador; TCP acrescenta prefixo de 4 bytes."
+}

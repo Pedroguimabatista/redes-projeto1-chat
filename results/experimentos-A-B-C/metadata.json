@@ -1,0 +1,146 @@
+{
+  "started_utc": "2026-11-04T17:44:07.662310+00:00",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.14",
+  "revision": "sem commit",
+  "parameters": {
+    "url": "http://127.0.0.1:8000",
+    "users": "config/users.json",
+    "user": null,
+    "out": "results/final-loopback-app",
+    "samples": 50,
+    "duration": 10,
+    "repeats": 3,
+    "rate": 10
+  },
+  "identity_mode": "cinco contas distintas",
+  "connections": [
+    {
+      "phase": "rtt-throughput",
+      "user": "ana",
+      "connection_id": "ee313e13dfeb40eaa8b3be122359c281"
+    },
+    {
+      "phase": "concurrency-1-repeat-1",
+      "user": "ana",
+      "connection_id": "c616b28accc247f1b3108df4aa9abdbd"
+    },
+    {
+      "phase": "concurrency-1-repeat-2",
+      "user": "ana",
+      "connection_id": "a87a3425de28408ba0d735269319c124"
+    },
+    {
+      "phase": "concurrency-1-repeat-3",
+      "user": "ana",
+      "connection_id": "c00a8ae87bd54efdae590040dc347d48"
+    },
+    {
+      "phase": "concurrency-2-repeat-1",
+      "user": "ana",
+      "connection_id": "76fa1bb0a46f4d3ca0f1b66f5751c84c"
+    },
+    {
+      "phase": "concurrency-2-repeat-1",
+      "user": "bruno",
+      "connection_id": "45274ace39274c94a9d991683546ebb7"
+    },
+    {
+      "phase": "concurrency-2-repeat-2",
+      "user": "ana",
+      "connection_id": "091aea6b6a3d4780814c45f71d4b0824"
+    },
+    {
+      "phase": "concurrency-2-repeat-2",
+      "user": "bruno",
+      "connection_id": "0d76cd3f6981449eb8dae989cbf1d812"
+    },
+    {
+      "phase": "concurrency-2-repeat-3",
+      "user": "ana",
+      "connection_id": "cecf3543eeae48a5bd15516dec163ebc"
+    },
+    {
+      "phase": "concurrency-2-repeat-3",
+      "user": "bruno",
+      "connection_id": "73b7314ed15a467b977184cb8b389ca3"
+    },
+    {
+      "phase": "concurrency-5-repeat-1",
+      "user": "ana",
+      "connection_id": "5bf428fd2f724d7ab586d2a27039f005"
+    },
+    {
+      "phase": "concurrency-5-repeat-1",
+      "user": "bruno",
+      "connection_id": "04871754a5744926b1edbaea1a56c108"
+    },
+    {
+      "phase": "concurrency-5-repeat-1",
+      "user": "carla",
+      "connection_id": "2c77340e290c440ab98c8b6ab0553eb4"
+    },
+    {
+      "phase": "concurrency-5-repeat-1",
+      "user": "diego",
+      "connection_id": "a462944ad3124cbc8a8d7b41a50e3cb2"
+    },
+    {
+      "phase": "concurrency-5-repeat-1",
+      "user": "elisa",
+      "connection_id": "7d6fccd28ec54a3985c75363efdbc443"
+    },
+    {
+      "phase": "concurrency-5-repeat-2",
+      "user": "ana",
+      "connection_id": "c3ef7becc6c142feade1d7725f544a14"
+    },
+    {
+      "phase": "concurrency-5-repeat-2",
+      "user": "bruno",
+      "connection_id": "0793672b511c4fb687543af8531acd43"
+    },
+    {
+      "phase": "concurrency-5-repeat-2",
+      "user": "carla",
+      "connection_id": "ad15d03cf8f143498c61b05f64097ac3"
+    },
+    {
+      "phase": "concurrency-5-repeat-2",
+      "user": "diego",
+      "connection_id": "2cf81eca856b45e7a3504997dbdda85d"
+    },
+    {
+      "phase": "concurrency-5-repeat-2",
+      "user": "elisa",
+      "connection_id": "9f591fb043e54463a5ca19f3ab8206fe"
+    },
+    {
+      "phase": "concurrency-5-repeat-3",
+      "user": "ana",
+      "connection_id": "0f6e351551b34a4cb37f9bd394aae90a"
+    },
+    {
+      "phase": "concurrency-5-repeat-3",
+      "user": "bruno",
+      "connection_id": "3edbf9b7561a43e0a38efd0adb2ad30f"
+    },
+    {
+      "phase": "concurrency-5-repeat-3",
+      "user": "carla",
+      "connection_id": "f10a931309a94c90aafb568520a3b399"
+    },
+    {
+      "phase": "concurrency-5-repeat-3",
+      "user": "diego",
+      "connection_id": "4ea015a8c8e04df2b6db5698fa908188"
+    },
+    {
+      "phase": "concurrency-5-repeat-3",
+      "user": "elisa",
+      "connection_id": "c8c3a3ed580f4f308b3b5c73ed2e9342"
+    }
+  ],
+  "method": "Relógio perf_counter no cliente; conexões persistentes; aquecimento de 5 pings; throughput stop-and-wait com confirmação de bytes, sem compressão WS; concorrência com carga por cliente fixa e mensagens persistidas; percentil 95 por posto mais próximo.",
+  "http_history_messages": 100
+}
