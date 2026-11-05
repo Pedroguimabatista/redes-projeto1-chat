@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+.pytest_cache/
+config/users.json
+data/
+logs/
+*.pcap
+*.pcapng
+.env
+tmp/
+entrega/
+ENTREGA_FINAL/
+results/nova-*/
+results/novo-*/
+results/preparacao*/
